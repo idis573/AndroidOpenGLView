@@ -21,6 +21,7 @@ public class GLWebViewActivity extends Activity {
     private GLSurfaceView mGLSurfaceView;
     private GLWebView mWebView;
     private AppBarLayout appBarLayout;
+    private BaseGLRenderer baseGlRenderer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,17 +32,42 @@ public class GLWebViewActivity extends Activity {
         appBarLayout = findViewById(R.id.appbar_layout);
 
         int width = DisplayUtil.getWidth(this);
-        int height = DisplayUtil.getHeight(this) - StatusUtil.getStatusHeight(this) - appBarLayout.getHeight();
+        int height = DisplayUtil.getHeight(this) / 2;
 
-        final BaseGLRenderer baseGlRenderer = new FooRenderer(this, width, height);
+        baseGlRenderer = new FooRenderer(this, width, height);
 
         mGLSurfaceView.setEGLContextClientVersion(2);
         mGLSurfaceView.setRenderer(baseGlRenderer);
+
 
         mWebView.setViewToGLRenderer(baseGlRenderer);
 
         mWebView.setWebViewClient(new WebViewClient());
         mWebView.setWebChromeClient(new WebChromeClient());
         mWebView.loadUrl("https://www.baidu.com");
+        mWebView.postDelayed(runnable,500);
+    }
+
+
+    private Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            mGLSurfaceView.queueEvent(new Runnable() {
+                @Override
+                public void run() {
+                    baseGlRenderer.genBitmap();
+                    mWebView.postDelayed(runnable, 500);
+                }
+            });
+        }
+    };
+
+    @Override
+    public void onBackPressed() {
+        if (mWebView.canGoBack()) {
+            mWebView.goBack();
+        } else {
+            super.onBackPressed();
+        }
     }
 }

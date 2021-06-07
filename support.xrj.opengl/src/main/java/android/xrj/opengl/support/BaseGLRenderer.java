@@ -1,6 +1,8 @@
 package android.xrj.opengl.support;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
@@ -8,6 +10,10 @@ import android.opengl.GLSurfaceView;
 import android.opengl.GLUtils;
 import android.util.Log;
 import android.view.Surface;
+
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -104,6 +110,33 @@ public class BaseGLRenderer implements GLSurfaceView.Renderer {
             mSurface.unlockCanvasAndPost(mSurfaceCanvas);
         }
         mSurfaceCanvas = null;
+    }
+
+    public void genBitmap(){
+        long time1 = System.currentTimeMillis();
+        int width=getTextureWidth();
+        int height = getTextureHeight();
+        int size = width* height;
+        ByteBuffer buf = ByteBuffer.allocateDirect(size * 4);
+        buf.order(ByteOrder.nativeOrder());
+        GLES20.glReadPixels(0, 0, getTextureWidth(), getTextureHeight(),
+                GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, buf);
+
+
+        int data[] = new int[size];
+        buf.asIntBuffer().get(data);
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        bitmap.setPixels(data, size-width, -width, 0, 0, width, height);
+
+        float scaleWidth = ((float) height) / width;
+        float scaleHeight = ((float) width) / height;
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth, scaleHeight);
+        Bitmap newbm = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true);
+
+        long time2 = System.currentTimeMillis();
+        android.util.Log.i("wqs","getJpegDataFromGpu565----->d time= " + (time2 - time1) + " ms;");
+
     }
 
 

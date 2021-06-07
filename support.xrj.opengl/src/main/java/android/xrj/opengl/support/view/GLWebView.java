@@ -38,6 +38,7 @@ public class GLWebView extends WebView implements GLRenderable {
             //draw the view to provided canvas
             super.draw(glAttachedCanvas);
         }
+        super.draw(canvas);
         // notify the canvas is updated
         mBaseGLRenderer.onDrawViewEnd();
     }
