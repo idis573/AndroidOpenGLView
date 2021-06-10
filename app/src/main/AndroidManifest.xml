@@ -18,6 +18,8 @@
         </activity>
         <activity android:name=".GLLinearLayoutActivity" />
         <activity android:name=".GLWebViewActivity" />
+        <activity android:name=".CapturedWebViewActivity" >
+        </activity>
     </application>
 
 </manifest>

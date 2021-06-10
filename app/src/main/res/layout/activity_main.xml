@@ -29,7 +29,11 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:orientation="vertical">
-
+        <Button
+            android:id="@+id/captured_web"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Captured web" />
         <Button
             android:id="@+id/open_gl_web"
             android:layout_width="match_parent"
